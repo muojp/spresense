@@ -57,7 +57,7 @@
  * Pre-processor Definitions
  ****************************************************************************/
 
-#define MMCSD_DETECT    PIN_AP_CLK
+#define MMCSD_DETECT    PIN_I2S0_DATA_OUT
 
 /****************************************************************************
  * Public Functions
@@ -169,6 +169,26 @@ void cxd56_spi5select(FAR struct spi_dev_s *dev, uint32_t devid, bool selected)
 
 uint8_t cxd56_spi5status(FAR struct spi_dev_s *dev, uint32_t devid)
 {
+#  ifdef CONFIG_CXD56_SPISD
+  if (devid == SPIDEV_MMCSD(0))
+    {
+      static bool initialized = false;
+      if (initialized == false)
+        {
+          /* Input enable */
+
+          cxd56_gpio_config(MMCSD_DETECT, true);
+
+          initialized = true;
+        }
+
+      /* MMCSD_DETECT is mapping to SD Card detect pin
+       * MMCSD_DETECT = 0: Inserted
+       * MMCSD_DETECT = 1: Removed
+       */
+      return cxd56_gpio_read(MMCSD_DETECT) ? SPI_STATUS_PRESENT : 0;
+    }
+#  endif
   return 0;
 }
 #endif

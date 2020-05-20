@@ -315,7 +315,7 @@ int board_app_initialize(uintptr_t arg)
 #ifdef CONFIG_CXD56_SPISD
   /* Mount the SPI-based MMC/SD block driver */
 
-  ret = board_spisd_initialize(0, 4);
+  ret = board_spisd_initialize(0, 5);
   if (ret < 0)
     {
       ferr("ERROR: Failed to initialize SPI device to MMC/SD: %d\n",
